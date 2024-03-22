@@ -1,10 +1,3 @@
-//
-//  CreateCandle.swift
-//  
-//
-//  Created by Roman Tverdokhleb on 22.03.2024.
-//
-
 import Fluent
 
 struct CreateCandle: AsyncMigration {

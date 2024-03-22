@@ -1,10 +1,3 @@
-//
-//  CandleController.swift
-//
-//
-//  Created by Roman Tverdokhleb on 22.03.2024.
-//
-
 import Vapor
 import Fluent
 

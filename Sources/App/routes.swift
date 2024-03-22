@@ -26,6 +26,10 @@ func routes(_ app: Application) throws {
                             contactMessage: "by @voity_vit")
     }
     
+    app.get("fetch-candles") { req async throws -> ClientResponse in
+        return try await req.client.get("http://iss.moex.com/iss/engines/stock/markets/shares/securities/YNDX/candles.json")
+    }
+    
     try app.register(collection: CandleController())
 }
 
@@ -39,4 +43,3 @@ struct UserInfo: Content {
     let name: String
     let age: Int
 }
-
