@@ -6,9 +6,8 @@ func routes(_ app: Application) throws {
         "CandleHub server is online!"
     }
     
-    app.get("hello", ":name") { req async throws -> String in
-        let name = try req.parameters.require("name")
-        return "Hello, \(name.capitalized)!"
+    app.get("hello") { req async throws -> String in
+        return "Hello!"
     }
     
     app.get("json", ":name") { req async throws -> UserResponse in
@@ -27,10 +26,10 @@ func routes(_ app: Application) throws {
                             contactMessage: "by @voity_vit")
     }
     
-    try app.register(collection: TodoController())
+    try app.register(collection: CandleController())
 }
 
-struct UserResponse: Content {
+struct UserResponse: Content, Equatable {
     let systemMessage: String
     let contentMessage: String
     let contactMessage: String
@@ -40,5 +39,4 @@ struct UserInfo: Content {
     let name: String
     let age: Int
 }
-
 
