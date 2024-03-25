@@ -8,7 +8,7 @@ struct CreateCandle: AsyncMigration {
             .field("high", .double, .required)
             .field("low", .double, .required)
             .field("close", .double, .required)
-            .field("date", .date, .required)
+            .field("date", .datetime, .required)
             .field("value", .int, .required)
             .field("volume", .int, .required)
             .field("pattern_id", .uuid, .required, .references("pattern", "id"))
