@@ -11,18 +11,18 @@ struct CandleController: RouteCollection {
         }
     }
 
-    func index(req: Request) async throws -> [Candlestick] {
-        try await Candlestick.query(on: req.db).all()
+    func index(req: Request) async throws -> [Candle] {
+        try await Candle.query(on: req.db).all()
     }
 
-    func create(req: Request) async throws -> Candlestick {
-        let candle = try req.content.decode(Candlestick.self)
+    func create(req: Request) async throws -> Candle {
+        let candle = try req.content.decode(Candle.self)
         try await candle.save(on: req.db)
         return candle
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
-        guard let candle = try await Candlestick.find(req.parameters.get("candleID"), on: req.db) else {
+        guard let candle = try await Candle.find(req.parameters.get("candleID"), on: req.db) else {
             throw Abort(.notFound)
         }
         try await candle.delete(on: req.db)

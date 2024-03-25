@@ -4,17 +4,20 @@ import FluentPostgresDriver
 import Vapor
 
 public func configure(_ app: Application) async throws {
+    
+    app.databases.use(.postgres(hostname: "localhost", port: 5432, username: "postgres", password: "WoTRemb165", database: "patternsdb"), as: .psql)
 
-    app.databases.use(DatabaseConfigurationFactory.postgres(configuration: .init(
-        hostname: Environment.get("DATABASE_HOST") ?? "localhost",
-        port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? SQLPostgresConfiguration.ianaPortNumber,
-        username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
-        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
-        database: Environment.get("DATABASE_NAME") ?? "vapor_database",
-        tls: .prefer(try .init(configuration: .clientDefault)))
-    ), as: .psql)
-
+    app.migrations.add(CreatePattern())
     app.migrations.add(CreateCandle())
+    
+    app.autoMigrate().whenComplete { result in
+        switch result {
+        case .success:
+            print("Migration successful")
+        case .failure(let error):
+            print("Migration failed: \(error)")
+        }
+    }
     
     try routes(app)
 }

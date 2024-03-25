@@ -47,4 +47,18 @@ final class AppTests: XCTestCase {
             XCTAssertEqual(expected, try res.content.decode(UserResponse.self))
         })
     }
+    
+//    func testGetThirdPartyRequestNoThrow() async throws {
+//        let app = Application(.testing)
+//        defer { app.shutdown() }
+//        try await configure(app)
+//        
+//        try app.test(.GET, "fetch-candles", beforeRequest: { req in
+//            let response = try await req.client.get("http://iss.moex.com/iss/engines/stock/markets/shares/securities/YNDX/candles.json")
+//        }, afterResponse: { res in
+//            XCTAssertEqual(res.status, .ok)
+//            XCTAssertEqual(expected, try res.content.decode(UserResponse.self))
+//        })
+//        
+//    }
 }
