@@ -13,6 +13,7 @@ struct PatternPass: Identifiable, Content {
     let name: String
     let candles: [Candle]
     let info: String
+    let filter: String
 
     func calculateYAxisDomain() -> ClosedRange<Double> {
         let lowPrices = candles.map(\.lowPrice)

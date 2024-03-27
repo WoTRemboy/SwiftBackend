@@ -39,14 +39,35 @@ func routes(_ app: Application) throws {
         return candle
     }
     
-    app.get("get-patterns") { req -> EventLoopFuture<[PatternPass]> in
-        return Pattern.query(on: req.db).with(\.$candles).all().flatMap { patterns in
-            let patternPassFutures = patterns.map { pattern in
-                let patternPassItem = PatternPass(name: pattern.name, candles: pattern.candles, info: pattern.info)
-                return req.eventLoop.makeSucceededFuture(patternPassItem)
+    app.get("all-patterns") { req -> EventLoopFuture<[PatternPass]> in
+        let query = req.query[String.self, at: "language"]
+        let language = detectLanguage(input: query ?? "ru")
+        switch language {
+        case .ru:
+            return Pattern.query(on: req.db).with(\.$candles).all().flatMap { patterns in
+                let patternPassFutures = patterns.map { pattern in
+                    let patternPassItem = PatternPass(name: pattern.nameRU, candles: pattern.candles, info: pattern.infoRU, filter: pattern.filter)
+                    return req.eventLoop.makeSucceededFuture(patternPassItem)
+                }
+                return patternPassFutures.flatten(on: req.eventLoop)
             }
-            return patternPassFutures.flatten(on: req.eventLoop)
+        case .en:
+            return Pattern.query(on: req.db).with(\.$candles).all().flatMap { patterns in
+                let patternPassFutures = patterns.map { pattern in
+                    let patternPassItem = PatternPass(name: pattern.nameEN, candles: pattern.candles, info: pattern.infoEN, filter: pattern.filter)
+                    return req.eventLoop.makeSucceededFuture(patternPassItem)
+                }
+                return patternPassFutures.flatten(on: req.eventLoop)
+            }
         }
+        
+    }
+    
+    app.get("test-pattern") { req -> Pattern in
+        let pattern = Pattern(nameRU: "Pattern", nameEN: "Pattern", infoRU: "here is", infoEN: "here is", filter: "")
+        let candle = Candle(date: Candle.stringToDate("2016-04-14T10:44:00+0000"), openPrice: 120, closePrice: 108, highPrice: 119, lowPrice: 108.1, value: 0, volume: 0, patternID: pattern.id ?? UUID())
+        
+        return pattern
     }
     
     app.get("all-tickers") { req async throws -> ClientResponse in
@@ -80,9 +101,17 @@ func routes(_ app: Application) throws {
             assertionFailure()
             return ClientResponse()
         }
+        print(uri)
         
         let response = try await req.client.get(uri)
         return response
+    }
+    
+    app.get("two-plus-two") { req -> ResultSum in
+        let lsh = req.query[Int.self, at: "lsh"]
+        let rhs = req.query[Int.self, at: "rsh"]
+        let result = SimpleLogic.twoPlusTwo(rhs: rhs, lhs: lsh)
+        return ResultSum(result: result)
     }
     
     app.get("fetch") { req -> EventLoopFuture<MoexCandles> in
@@ -101,6 +130,36 @@ private struct Cursor {
     let total: Int
     let pageSize: Int
 }
+
+struct ResultSum: Content {
+    let result: Int
+}
+
+let jsonString = """
+{
+    "metadata": {
+        "open": {"type": "double"},
+        "close": {"type": "double"},
+        "high": {"type": "double"},
+        "low": {"type": "double"},
+        "value": {"type": "double"},
+        "volume": {"type": "double"},
+        "begin": {"type": "datetime","bytes": 19,"maxSize": 0},
+        "end": {"type": "datetime","bytes": 19,"maxSize": 0}
+    },
+    "columns": [
+        "open",
+        "close",
+        "high",
+        "low",
+        "value",
+        "volume",
+        "begin",
+        "end"
+    ],
+    "data": []
+}
+"""
 
 func convertResponseToDictionary(_ response: Response) throws -> [String: Any]? {
     let data = response.body.data
