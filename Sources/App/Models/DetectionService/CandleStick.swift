@@ -23,6 +23,7 @@ func findTwoCrows(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 2 else { return nil }
     for i in 2 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
         let secondCandle = candleColor(open: candles[i - 1].openPrice, close: candles[i - 1].closePrice)
