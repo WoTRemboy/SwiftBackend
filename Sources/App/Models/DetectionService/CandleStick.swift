@@ -60,6 +60,7 @@ func findThreeWhiteSoldiers(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 2 else { return nil }
     for i in 2 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
         let secondCandle = candleColor(open: candles[i - 1].openPrice, close: candles[i - 1].closePrice)
@@ -96,6 +97,7 @@ func findThreeBlackCrows(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 2 else { return nil }
     for i in 2 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
         let secondCandle = candleColor(open: candles[i - 1].openPrice, close: candles[i - 1].closePrice)
@@ -131,6 +133,7 @@ func findThreeInside(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 2 else { return nil }
     for i in 2 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
         let secondCandle = candleColor(open: candles[i - 1].openPrice, close: candles[i - 1].closePrice)
@@ -168,6 +171,7 @@ func findThreeLineStrike(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 4 else { return nil }
     for i in 4 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 4].openPrice, close: candles[i - 4].closePrice)
         let secondCandle = candleColor(open: candles[i - 3].openPrice, close: candles[i - 3].closePrice)
@@ -205,6 +209,7 @@ func findThreeOutsideUp(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 2 else { return nil }
     for i in 2 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
         let secondCandle = candleColor(open: candles[i - 1].openPrice, close: candles[i - 1].closePrice)
@@ -238,6 +243,7 @@ func findThreeStarsInSouth(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 3 else { return nil }
     for i in 3 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 3].openPrice, close: candles[i - 3].closePrice)
         let secondCandle = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
@@ -274,6 +280,7 @@ func findAbandonedBaby(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 3 else { return nil }
     for i in 3 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 3].openPrice, close: candles[i - 3].closePrice)
         _ = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
@@ -313,6 +320,7 @@ func findAdvanceBlock(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 3 else { return nil }
     for i in 3 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 3].openPrice, close: candles[i - 3].closePrice)
         let secondCandle = candleColor(open: candles[i - 2].openPrice, close: candles[i - 2].closePrice)
@@ -358,6 +366,7 @@ func findClosingMarubozu(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 0 else { return nil }
     for i in 0 ..< candles.count {
         let candle = candles[i]
 
@@ -393,6 +402,7 @@ func findConcealingBabySwallow(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 6 else { return nil }
     for i in 6 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 6].openPrice, close: candles[i - 6].closePrice)
         let secondCandle = candleColor(open: candles[i - 5].openPrice, close: candles[i - 5].closePrice)
@@ -437,6 +447,7 @@ func findBeltHold(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 1 else { return nil }
     for i in 1 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 1].openPrice, close: candles[i - 1].closePrice)
         let secondCandle = candleColor(open: candles[i].openPrice, close: candles[i].closePrice)
@@ -470,6 +481,7 @@ func findBreakaway(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 4 else { return nil }
     for i in 4 ..< candles.count {
         let firstCandle = candleColor(open: candles[i - 4].openPrice, close: candles[i - 4].closePrice)
         let secondCandle = candleColor(open: candles[i - 3].openPrice, close: candles[i - 3].closePrice)
@@ -533,6 +545,7 @@ func findDojiStar(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 1 else { return nil }
     for i in 1 ..< candles.count {
         let firstCandle = candles[i - 1]
         let secondCandle = candles[i]
@@ -587,6 +600,7 @@ func findEngulfing(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 1 else { return nil }
     for i in 1 ..< candles.count {
         let firstCandle = candles[i - 1]
         let secondCandle = candles[i]
@@ -625,6 +639,7 @@ func findEveningDojiStar(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
     var signals = [Signal]()
 
+    guard candles.count > 2 else { return nil }
     for i in 2 ..< candles.count {
         let firstCandle = candles[i - 2]
         let secondCandle = candles[i - 1]
