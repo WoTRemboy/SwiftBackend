@@ -88,7 +88,7 @@ func routes(_ app: Application) throws {
         }
     }
     
-    app.get("detect-pattern") { req -> EventLoopFuture<[LocalizedPattern]> in
+    app.post("detect-pattern") { req -> EventLoopFuture<[LocalizedPattern]> in
         let candles = try req.content.decode([DetectedCandle].self)
         let query = req.query[String.self, at: "language"]
         let language = detectLanguage(input: query ?? "ru")
