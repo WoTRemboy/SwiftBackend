@@ -7,26 +7,6 @@ func routes(_ app: Application) throws {
         "CandleHub server is online!"
     }
     
-    app.get("hello") { req async throws -> String in
-        return "Hello!"
-    }
-    
-    app.get("json", ":name") { req async throws -> UserResponse in
-        let name = try req.parameters.require("name")
-        let message = "Hello, \(name.capitalized)!"
-        return UserResponse(systemMessage: "CandleHub is coming soon!",
-                            contentMessage: message,
-                            contactMessage: "by @voity_vit")
-    }
-    
-    app.post("user-info") { req async throws -> UserResponse in
-        let userInfo = try req.content.decode(UserInfo.self)
-        let message = "Hello, \(userInfo.name.capitalized)! You are \(userInfo.age) years old."
-        return UserResponse(systemMessage: "CandleHub is coming soon!",
-                            contentMessage: message,
-                            contactMessage: "by @voity_vit")
-    }
-    
     app.post("pattern") { req async throws -> Pattern in
         let patternInfo = try req.content.decode(Pattern.self)
         try await patternInfo.save(on: req.db)
@@ -61,13 +41,6 @@ func routes(_ app: Application) throws {
             }
         }
         
-    }
-    
-    app.get("test-pattern") { req -> Pattern in
-        let pattern = Pattern(nameRU: "Pattern", nameEN: "Pattern", infoRU: "here is", infoEN: "here is", filter: "")
-        let candle = Candle(date: Candle.stringToDate("2016-04-14T10:44:00+0000"), openPrice: 120, closePrice: 108, highPrice: 119, lowPrice: 108.1, value: 0, volume: 0, patternID: pattern.id ?? UUID())
-        
-        return pattern
     }
     
     app.get("all-tickers") { req async throws -> ClientResponse in
@@ -107,18 +80,32 @@ func routes(_ app: Application) throws {
         return response
     }
     
-    app.get("two-plus-two") { req -> ResultSum in
-        let lsh = req.query[Int.self, at: "lsh"]
-        let rhs = req.query[Int.self, at: "rsh"]
-        let result = SimpleLogic.twoPlusTwo(rhs: rhs, lhs: lsh)
-        return ResultSum(result: result)
-    }
-    
     app.get("fetch") { req -> EventLoopFuture<MoexCandles> in
         return req.client.get("http://iss.moex.com/iss/engines/stock/markets/shares/securities/YNDX/candles.json").flatMapThrowing { res in
             let result = try res.content.decode(MoexCandles.self)
             print(result)
             return result
+        }
+    }
+    
+    app.get("detect-pattern") { req -> EventLoopFuture<[LocalizedPattern]> in
+        let candles = try req.content.decode([DetectedCandle].self)
+        let query = req.query[String.self, at: "language"]
+        let language = detectLanguage(input: query ?? "ru")
+        let patterns = DetectionPatterns.detectionPatterns(candles: candles)
+        let unPatterns = patterns.compactMap { $0 }
+        var result = [LocalizedPattern]()
+        switch language {
+        case .ru:
+            for pattern in unPatterns {
+                result.append(LocalizedPattern(name: pattern.nameRU, signal: pattern.signal, dates: pattern.dates))
+            }
+            return req.eventLoop.makeSucceededFuture(result)
+        case .en:
+            for pattern in unPatterns {
+                result.append(LocalizedPattern(name: pattern.nameEN, signal: pattern.signal, dates: pattern.dates))
+            }
+            return req.eventLoop.makeSucceededFuture(result)
         }
     }
     
@@ -131,60 +118,3 @@ private struct Cursor {
     let pageSize: Int
 }
 
-struct ResultSum: Content {
-    let result: Int
-}
-
-let jsonString = """
-{
-    "metadata": {
-        "open": {"type": "double"},
-        "close": {"type": "double"},
-        "high": {"type": "double"},
-        "low": {"type": "double"},
-        "value": {"type": "double"},
-        "volume": {"type": "double"},
-        "begin": {"type": "datetime","bytes": 19,"maxSize": 0},
-        "end": {"type": "datetime","bytes": 19,"maxSize": 0}
-    },
-    "columns": [
-        "open",
-        "close",
-        "high",
-        "low",
-        "value",
-        "volume",
-        "begin",
-        "end"
-    ],
-    "data": []
-}
-"""
-
-func convertResponseToDictionary(_ response: Response) throws -> [String: Any]? {
-    let data = response.body.data
-    
-    do {
-        if let jsonData = data,
-           let jsonDictionary = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] {
-            return jsonDictionary
-        } else {
-            print("Failed to convert JSON data to dictionary")
-            return nil
-        }
-    } catch {
-        print("Error decoding JSON data: \(error)")
-        return nil
-    }
-}
-
-struct UserResponse: Content, Equatable {
-    let systemMessage: String
-    let contentMessage: String
-    let contactMessage: String
-}
-
-struct UserInfo: Content {
-    let name: String
-    let age: Int
-}
