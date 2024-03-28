@@ -18,7 +18,7 @@ struct DetectionPatterns: Hashable {
         patterns.append(findBreakaway(candles: candles))
         patterns.append(findClosingMarubozu(candles: candles))
         patterns.append(findConcealingBabySwallow(candles: candles))
-        patterns.append(findDoji(candles: candles))
+//        patterns.append(findDoji(candles: candles))
         patterns.append(findDojiStar(candles: candles))
         patterns.append(findDragonflyDoji(candles: candles))
         patterns.append(findEngulfing(candles: candles))

@@ -518,29 +518,29 @@ func findBreakaway(candles: [DetectedCandle]) -> DetectedPattern? {
     }
 }
 
-func findDoji(candles: [DetectedCandle]) -> DetectedPattern? {
-    var dates = [Date]()
-    var signals = [Signal]()
-
-    for candle in candles {
-        // Проверяем, что тело свечи очень маленькое (разница между открытием и закрытием небольшая)
-        if abs(candle.openPrice - candle.closePrice) < 0.01 {
-            dates.append(candle.date)
-            signals.append(.buy)
-        }
-    }
-
-    if signals.isEmpty {
-        return nil
-    } else {
-        return DetectedPattern(
-            nameRU: "Доджи",
-            nameEN: "Doji",
-            signal: signals.last!,
-            dates: dates
-        )
-    }
-}
+//func findDoji(candles: [DetectedCandle]) -> DetectedPattern? {
+//    var dates = [Date]()
+//    var signals = [Signal]()
+//
+//    for candle in candles {
+//        // Проверяем, что тело свечи очень маленькое (разница между открытием и закрытием небольшая)
+//        if abs(candle.openPrice - candle.closePrice) < 0.01 {
+//            dates.append(candle.date)
+//            signals.append(.buy)
+//        }
+//    }
+//
+//    if signals.isEmpty {
+//        return nil
+//    } else {
+//        return DetectedPattern(
+//            nameRU: "Доджи",
+//            nameEN: "Doji",
+//            signal: signals.last!,
+//            dates: dates
+//        )
+//    }
+//}
 
 func findDojiStar(candles: [DetectedCandle]) -> DetectedPattern? {
     var dates = [Date]()
